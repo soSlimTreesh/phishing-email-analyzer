@@ -1,5 +1,16 @@
 public class PhishingEmailAnalyzer  {
+
+   public static int scoreCategory (String text, String[] keywords)  {
+      int score = 0;
+      for (String keyword : keywords) {
+         if (text.contains(keyword)) {
+            score += 2;
+         }
+      }
+      return score;
+   }
    public static void main(String[] args) {
+   
       String email = """
             From: "PayPal Security" <security-alert@paypa1-support.example.com>
             Reply-To: helpdesk@account-verify.example.net
@@ -20,58 +31,17 @@ public class PhishingEmailAnalyzer  {
             Security Team
             """;
    
+      String[] urgencyKeywords = {"urgent", "immediately", "act now", "final notice", "within 24 hours", "expires", "last chance", "suspended", "deadline"};
    
+      String[] threatKeywords = {"permanently closed", "account locked", "unauthorized access", "unusual activity", "suspicious activity", "legal action", "failure to act"};
    
-      String urgencyKeyword1 = "urgent";
-      String urgencyKeyword2 = "immediately";
-      String urgencyKeyword3 = "act now";
-      String urgencyKeyword4 = "final notice";
-      String urgencyKeyword5 = "within 24 hours";
-      String urgencyKeyword6 = "expires";
-      String urgencyKeyword7 = "last chance";
-      String urgencyKeyword8 = "suspended";
-      String urgencyKeyword9 = "deadline";
-      String[] urgencyKeywords = {urgencyKeyword1, urgencyKeyword2, urgencyKeyword3, urgencyKeyword4, urgencyKeyword5, urgencyKeyword6, urgencyKeyword7, urgencyKeyword8, urgencyKeyword9};
+      String[] credentialOrPaymentKeywords = {"verify your account", "confirm your password", "billing information", "update payment", "social security", "login credentials", "wire transfer", "gift card"};
    
-      String threatKeyword1 = "permanently closed";
-      String threatKeyword2 = "account locked";
-      String threatKeyword3 = "unauthorized access";
-      String threatKeyword4 = "unusual activity";
-      String threatKeyword5 = "suspicious activity";
-      String threatKeyword6 = "legal action";
-      String threatKeyword7 = "failure to act";
-      String[] threatKeywords = {threatKeyword1, threatKeyword2, threatKeyword3, threatKeyword4, threatKeyword5, threatKeyword6, threatKeyword7};
+      String[] genericGreetingKeywords = {"dear customer", "dear user", "dear member", "valued customer", "dear account holder"};
    
-      String credentialOrPaymentKeyword1 = "verify your account";
-      String credentialOrPaymentKeyword2 = "confirm your password";
-      String credentialOrPaymentKeyword3 = "billing information";
-      String credentialOrPaymentKeyword4 = "update payment";
-      String credentialOrPaymentKeyword5 = "social security";
-      String credentialOrPaymentKeyword6 = "login credentials";
-      String credentialOrPaymentKeyword7 = "wire transfer";
-      String credentialOrPaymentKeyword8 = "gift card";
-      String[] credentialOrPaymentKeywords = {credentialOrPaymentKeyword1, credentialOrPaymentKeyword2, credentialOrPaymentKeyword3, credentialOrPaymentKeyword4, credentialOrPaymentKeyword5, credentialOrPaymentKeyword6, credentialOrPaymentKeyword7, credentialOrPaymentKeyword8};
+      String[] baitAndIncentiveKeywords = {"you've won", "free", "refund", "prize", "claim your", "congratulations", "invoice attached"};
    
-      String genericGreetingKeyword1 = "dear customer";
-      String genericGreetingKeyword2 = "dear user";
-      String genericGreetingKeyword3 = "dear member";
-      String genericGreetingKeyword4 = "valued customer";
-      String genericGreetingKeyword5 = "dear account holder";
-      String[] genericGreetingKeywords = {genericGreetingKeyword1, genericGreetingKeyword2, genericGreetingKeyword3, genericGreetingKeyword4, genericGreetingKeyword5};
-   
-      String baitAndIncentiveKeyword1 = "you’ve won";
-      String baitAndIncentiveKeyword2 = "free";
-      String baitAndIncentiveKeyword3 = "refund";
-      String baitAndIncentiveKeyword4 = "prize";
-      String baitAndIncentiveKeyword5 = "claim your";
-      String baitAndIncentiveKeyword6 = "congratulations";
-      String baitAndIncentiveKeyword7 = "invoice attached";
-      String[] baitAndIncentiveKeywords = {baitAndIncentiveKeyword1, baitAndIncentiveKeyword2, baitAndIncentiveKeyword3, baitAndIncentiveKeyword4, baitAndIncentiveKeyword5, baitAndIncentiveKeyword6, baitAndIncentiveKeyword7};
-   
-      String linkLanguageKeyword1 = "click here";
-      String linkLanguageKeyword2 = "click below";
-      String linkLanguageKeyword3 = "log in here";
-      String[] linkLanguageKeywords = {linkLanguageKeyword1, linkLanguageKeyword2, linkLanguageKeyword3};
+      String[] linkLanguageKeywords = {"click here", "click below", "log in here"};
    
       int urgencyScore = 0;
       int threatScore = 0;
@@ -80,38 +50,15 @@ public class PhishingEmailAnalyzer  {
       int baitAndIncentiveScore = 0;
       int linkLanguageScore = 0;
    
-      String readyToScanEmail = email.toLowerCase();
+      String readyToScanEmail = email.toLowerCase().replaceAll("\\s+", " ");
    
-      for (int j = 0; j < urgencyKeywords.length; j++) {
-         if (readyToScanEmail.contains(urgencyKeywords[j])) {
-            urgencyScore += 2;
-         }
-      }
-      for (int k = 0; k < threatKeywords.length; k++) {
-         if (readyToScanEmail.contains(threatKeywords[k])) {
-            threatScore += 2;
-         }
-      }
-      for (int l = 0; l < credentialOrPaymentKeywords.length; l++) {
-         if (readyToScanEmail.contains(credentialOrPaymentKeywords[l])) {
-            credentialOrPaymentScore += 2;
-         }
-      }
-      for (int m = 0; m < genericGreetingKeywords.length; m++) {
-         if (readyToScanEmail.contains(genericGreetingKeywords[m])) {
-            genericGreetingScore += 2;
-         }
-      }
-      for (int n = 0; n < baitAndIncentiveKeywords.length; n++) {
-         if (readyToScanEmail.contains(baitAndIncentiveKeywords[n])) {
-            baitAndIncentiveScore += 2;
-         }
-      }
-      for (int o = 0; o < linkLanguageKeywords.length; o++) {
-         if (readyToScanEmail.contains(linkLanguageKeywords[o])) {
-            linkLanguageScore += 2;
-         }
-      }
+      urgencyScore = scoreCategory(readyToScanEmail, urgencyKeywords);
+      threatScore = scoreCategory(readyToScanEmail, threatKeywords);
+      credentialOrPaymentScore = scoreCategory(readyToScanEmail, credentialOrPaymentKeywords);
+      genericGreetingScore = scoreCategory(readyToScanEmail, genericGreetingKeywords);
+      baitAndIncentiveScore = scoreCategory(readyToScanEmail, baitAndIncentiveKeywords);
+      linkLanguageScore = scoreCategory(readyToScanEmail, linkLanguageKeywords);
+      
       System.out.println("Urgency Score: " + urgencyScore);
       System.out.println("Threat Score: " + threatScore);
       System.out.println("Credential or Payment Score: " + credentialOrPaymentScore);
